@@ -1,0 +1,6 @@
+aio-pika
+openai
+httpx
+loguru
+pydantic
+pydantic_settings
