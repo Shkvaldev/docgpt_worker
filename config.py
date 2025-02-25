@@ -5,6 +5,9 @@ class Settings(BaseSettings):
     rabbitmq_user: str
     rabbitmq_password: str
 
+    openai_endpoint: str
+    openai_api_key: str
+
     translator_url: str
 
     date_format: str = '%Y-%m-%d'
