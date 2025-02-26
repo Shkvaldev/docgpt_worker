@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    deploy:
+      # Number of workers - adjust to your needs
+      replicas: 1
     restart: unless-stopped
     env_file:
       - .env
