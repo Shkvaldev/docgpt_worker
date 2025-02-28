@@ -1,5 +1,6 @@
 import asyncio
-from aio_pika import connect_robust
+import json
+from aio_pika import connect_robust, Message
 from aio_pika.patterns import Master
 from loguru import logger
 
@@ -16,12 +17,22 @@ async def main():
         queue = await channel.declare_queue(
             settings.tasks_queue
         )
-
+        
+        buffer = {}
+         
         # Hook for processing messages
         await queue.consume(
-            MessageManager().handle,
+            MessageManager(buffer=buffer).handle,
             no_ack=False
         )
+
+        if "result" in buffer:
+            await channel.default_exchange.publish(
+                Message(
+                    body=json.dumps(buffer["answer"]).encode(),
+                    ),
+                    routing_key=settings.tasks_statuses_queue,
+            )
 
         # Run forever
         await asyncio.Future()

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     translator_url: str
     
     tasks_queue: str = "tasks"
-    tasks_statuses_queue: str = "tasks_statuses"
+    tasks_statuses_queue: str = "task_statuses"
 
     date_format: str = '%Y-%m-%d'
     date_time_format: str = '%Y-%m-%d %H:%M'
