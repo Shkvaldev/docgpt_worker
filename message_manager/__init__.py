@@ -1,16 +1,17 @@
-from typing import Any, Dict
+from typing import Optional 
 import json
 import asyncio
 from aio_pika import IncomingMessage, Message
 from loguru import logger
 
+from schemas import TaskStatus
 from tasks.llm import LLM
 from tasks.webwalker import WebWalker
 from config import settings
 
 class MessageManager:
     """
-    Comes as router which choses which task to petform operations on message from rabbitmq.
+    Comes as router which choses which task to perform operations on message from rabbitmq.
     """
     def __init__(self, channel) -> None:
         self.channel = channel
@@ -19,7 +20,7 @@ class MessageManager:
             "webwalker": WebWalker
         }
 
-    async def publish_answer(self, payload):
+    async def publish_answer(self, payload: TaskStatus):
         """
         Publishes answer to rabbitmq.
         """
@@ -31,7 +32,8 @@ class MessageManager:
         try:
             await self.channel.default_exchange.publish(
                 Message(
-                    body=json.dumps(payload).encode(),
+                    body=json.dumps(payload.model_dump()).encode(),
+                    headers={"task_id": payload.task_id}
                     ),
                     routing_key=settings.tasks_statuses_queue,
             )
@@ -54,7 +56,13 @@ class MessageManager:
                     task = asyncio.create_task(
                         self.links[link]().perform(message=message)
                     )
-                    payload = await task
+                    
+                    payload: TaskStatus = await task
+                    
+                    # If no answer from worker - ignore
+                    if not payload:
+                        return
+
                     try:
                         await self.publish_answer(payload=payload)
                     except Exception as e:
