@@ -5,8 +5,7 @@ from aio_pika import IncomingMessage, Message
 from loguru import logger
 
 from schemas import TaskStatus
-from tasks.llm import LLM
-from tasks.webwalker import WebWalker
+from tasks import LLM, WebWalker
 from config import settings
 
 class MessageManager:
