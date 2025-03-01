@@ -7,6 +7,7 @@ class Settings(BaseSettings):
 
     openai_endpoint: str
     openai_api_key: str
+    openai_default_model: str
 
     translator_url: str
     
