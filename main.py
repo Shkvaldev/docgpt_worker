@@ -5,6 +5,7 @@ from loguru import logger
 from message_manager import MessageManager
 from config import settings
 
+from services import OpenAIService
 # Entrypoint
 async def main():
     connection = await connect_robust(
